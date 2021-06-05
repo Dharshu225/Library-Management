@@ -10,9 +10,9 @@ import com.dharshiny.application.Repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -26,8 +26,8 @@ public class ApplicationController {
         return bookRepository.save(book);
     }
     
-    @PostMapping(path = "/editBook/bookId={id}")
-    public ResponseEntity<BookModel> updateBook(@PathVariable(value="id") String bid, 
+    @PostMapping(path = "/editBook")
+    public ResponseEntity<BookModel> updateBook(@RequestParam(value="bookId") String bid, 
             @RequestBody BookModel bookDetails) throws  ResourceNotFoundException{
         
                 BookModel book=bookRepository.findById(bid).orElseThrow(
@@ -42,8 +42,8 @@ public class ApplicationController {
        
     }
 
-    @PostMapping(path = "/deleteBook/bookId={id}")
-    public  String deleteBook(@PathVariable(value="id") String bid)throws ResourceNotFoundException{
+    @GetMapping(path = "/deleteBook")
+    public  String deleteBook(@RequestParam("bookId") String bid)throws ResourceNotFoundException{
         
         BookModel book=bookRepository.findById(bid).orElseThrow(
                     () -> new ResourceNotFoundException("Book not found on :: " + bid));
@@ -59,8 +59,8 @@ public class ApplicationController {
         return books;
     }
 
-    @PostMapping("getByType/id={genre}")
-    public List<BookModel> getBookByGenre(@PathVariable(value="genre") String genre){
+    @GetMapping("/getByType")
+    public List<BookModel> getBookByGenre(@RequestParam(value="id") String genre){
         List<BookModel> books=new ArrayList<>();
         bookRepository.findAll().forEach((book) -> {if(genre.equals(book.getGenre())) {books.add(book);}});
         return books;
